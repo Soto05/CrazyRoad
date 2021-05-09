@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class SpawnTerrain : MonoBehaviour
 {
+    public int minDistanceFromPlayer;
     public int maxRangeTerrain;//El maximo de terrenos que vamos a tener
-    private Vector3 nowPosition = new Vector3 (0, 0, 0);//Este almacenara la posición actual pero al principio de juego siempre empieza en 0, 0, 0
+    public Vector3 nowPosition = new Vector3 (0, 0, 0);//Este almacenara la posición actual pero al principio de juego siempre empieza en 0, 0, 0
     [SerializeField] private List<GameObject> terrains = new List<GameObject>();// La lista de los diferentes terrenos que tenemos
     // Start is called before the first frame update
     private List<GameObject> terrainsGenerates = new List<GameObject>();//Lista de los terrenos generados
+    public Transform objectTerrains;//Carpeta para almacenar los terrenos
     void Start()
     {
-        for (int i = 0; i < maxRangeTerrain; i++)
+        for (int i = 0; i < maxRangeTerrain; i++)//agrega los suelos del inicio
         {
-            SpawnTerrainRandom();
+            SpawnTerrainRandom(new Vector3(0,0,0), true);
         }
 
     }
@@ -21,22 +23,28 @@ public class SpawnTerrain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.W))
-        {
-            SpawnTerrainRandom();
-        }
+        // if(Input.GetKeyDown(KeyCode.W))
+        // {
+        //     SpawnTerrainRandom();
+        // }
     }
 
-    private void SpawnTerrainRandom()//Crea terrenos al hazar con la diferencia de la posicion x+1 
+    public void SpawnTerrainRandom(Vector3 playerPos, bool isStart)//Crea terrenos al hazar con la diferencia de la posicion x+1 
     {
-        GameObject terrain = Instantiate(terrains[Random.Range(0, terrains.Count)], nowPosition, Quaternion.identity);
-        terrainsGenerates.Add(terrain);
-        if(terrainsGenerates.Count> maxRangeTerrain)
+        if((nowPosition.x-playerPos.x < minDistanceFromPlayer)||(isStart))//si superan la distancia del jugador al final empiece a generar más niveles
         {
-            Destroy(terrainsGenerates[0]);//Destruye el terreno
-            terrainsGenerates.RemoveAt(0);//Elimin de la lista el terreno
-        }
-        nowPosition.x++;
+            GameObject terrain = Instantiate(terrains[Random.Range(0, terrains.Count)], nowPosition, Quaternion.identity);
+            terrain.transform.SetParent(objectTerrains);//Enviara los terrenos al padre (Terrains)
+            terrainsGenerates.Add(terrain);
+            if(terrainsGenerates.Count> maxRangeTerrain)
+            {
+                Destroy(terrainsGenerates[0]);//Destruye el terreno
+                terrainsGenerates.RemoveAt(0);//Elimin de la lista el terreno
+            }
+            nowPosition.x++;
 
+        }    
     }
+
+
 }

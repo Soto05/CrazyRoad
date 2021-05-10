@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public int zRange;//Limite en Z
     public SpawnTerrain terrainGenerator;
     private Animator animator;
     private bool isJump;
@@ -30,11 +31,26 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.A) && !isJump)
         {
-            MovePlayer(new Vector3(0,0,1));
+            if(transform.position.z < zRange)
+            {
+                MovePlayer(new Vector3(0,0,1));
+            }
+            else 
+            {
+                MovePlayer(new Vector3(0,0,0));//Se queda en la misma position
+            }
+            
         }
         else if (Input.GetKeyDown(KeyCode.D) && !isJump)
         {
-            MovePlayer(new Vector3(0,0,-1));
+            if(transform.position.z > -zRange)
+            {
+                MovePlayer(new Vector3(0,0,-1));
+            }
+            else 
+            {
+                MovePlayer(new Vector3(0,0,0));//Se queda en la misma position
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.W)||Input.GetKeyUp(KeyCode.A)||Input.GetKeyUp(KeyCode.D))

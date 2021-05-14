@@ -4,21 +4,24 @@ using UnityEngine;
 
 public class SpawnVehicle : MonoBehaviour
 {
-    public float spanwTime;
+    public int speedEnemyValue;
+    public float spanwTimeMin;
+    public float spanwTimeMax;
+    private float spanwTime;
+
     public GameObject vehicle;
     public Transform roadPos;
+    private MoveEnemy speedEnemy;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        StartCoroutine(SpawnVehicleGround());
+        spanwTime=Random.Range(spanwTimeMin,spanwTimeMax);
+        InvokeRepeating("SpawnVehicleGround", 1,spanwTime);
     }
 
-    private IEnumerator SpawnVehicleGround()
+    void SpawnVehicleGround()
     {
-
-        yield return new WaitForSeconds(spanwTime);
-        Vector3 vehiclePos = new Vector3(roadPos.transform.position.x,roadPos.transform.position.y+1,roadPos.transform.position.z+10);
-        Instantiate(vehicle, vehiclePos, Quaternion.Euler(0,90,0));
+        Instantiate(vehicle, roadPos.position, Quaternion.Euler(0,90,0));
     }
 
     // Update is called once per frame
